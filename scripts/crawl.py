@@ -3,16 +3,16 @@ import os
 import json
 import re
 
-TOPICS = ['Lịch sử Việt Nam','Việt Nam thời tiền sử','Bắc thuộc','Hùng Vương','Văn Lang','An Dương Vương','Âu Lạc',
+class WikipediaPage:
+    TOPICS = ['Lịch sử Việt Nam','Việt Nam thời tiền sử','Bắc thuộc','Hùng Vương','Văn Lang','An Dương Vương','Âu Lạc',
           'Thời kỳ Bắc thuộc lần thứ nhất','Thời kỳ Bắc thuộc lần thứ hai','Thời kỳ tự chủ Việt Nam',
           'Thời kỳ Bắc thuộc lần thứ ba','Thời kỳ Bắc thuộc lần thứ tư','Nhà Ngô','Loạn 12 sứ quân',
           'Nhà Đinh','Nhà Tiền Lê','Nhà Lý','Nhà Trần','Nhà Hồ','Nhà Hậu Lê','Nhà Mạc',
           'Chiến tranh Lê – Mạc','Trịnh – Nguyễn phân tranh','Nhà Tây Sơn','Nhà Nguyễn',
           'Pháp thuộc','Biên niên sử Việt Nam thời kỳ 1945–1975']
-
-class WikipediaPage:
-    def __init__(self, topics, language='vi', user_agent='rag (pqtrung34@gmail.com)', ):
-        self.topics = topics
+    
+    def __init__(self, language='vi', user_agent='rag (pqtrung34@gmail.com)', ):
+        self.topics = self.TOPICS
         self.language = language
         self.user_agent = user_agent
         self.wiki = wikipediaapi.Wikipedia(user_agent='rag (pqtrung34@gmail.com)', 
@@ -51,7 +51,7 @@ class WikipediaPage:
         else:
             return None
         
-    def get_all_pages(self):
+    def get_all_pages(self, filename):
         # Lấy nội dung toàn bộ chủ đề
         for topic in self.topics:
             content = self.get_page(topic)
@@ -59,11 +59,12 @@ class WikipediaPage:
                 self.pages[topic] = content
 
         # Lưu vào file
-        curr_dir = os.getcwd()
-        filename = os.path.join(os.path.dirname(curr_dir), 'data', 'wikipedia.json')
         self.save(filename)
 
     def save(self, filename):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(self.pages, f, ensure_ascii=False, indent=2)
+            for topic, content in self.pages.items():
+                f.write(f"=== {topic} ===\n")
+                f.write(content)
+                f.write("\n\n")
