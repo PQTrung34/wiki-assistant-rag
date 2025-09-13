@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+wikipedia-api
+langchain
+langchain-chroma
+langchain-community
+langchain-huggingface
+transformers
+pydantic
