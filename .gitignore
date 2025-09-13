@@ -1,1 +1,5 @@
 venv/
+scripts/__pycache__
+vector_store/__pycache__
+vector_db/
+data/

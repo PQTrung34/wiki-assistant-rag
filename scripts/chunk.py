@@ -1,17 +1,18 @@
-from crawl import WikipediaPage
+from .crawl import WikipediaPage
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
-# from langchain.embeddings import HuggingFaceEmbeddings
 
 class Chunking:
     def __init__(self):
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
-        # self.embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
+        pass
 
     def get_data(self):
         curr_dir = os.getcwd()
-        filename = os.path.join(os.path.dirname(curr_dir), 'data', 'wikipedia.txt')
+        data_dir = os.path.join(curr_dir, 'data')
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+            
+        filename = os.path.join(data_dir, 'wikipedia.txt')
         if not os.path.exists(filename):
             wiki = WikipediaPage()
             wiki.get_all_pages(filename)
@@ -19,11 +20,9 @@ class Chunking:
             data = f.read()
         return data
     
-    def chunk(self):
+    def get_chunks(self):
         data = self.get_data()
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100,
+                                                       separators=['\n\n', '\n', '. ', ' ', ''])
         chunks = text_splitter.split_text(data)
         return chunks
-
-test = Chunking()
-print(len(test.chunk()))
